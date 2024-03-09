@@ -1,0 +1,828 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Introducere în structurile de control, funcții, tablouri (array-uri) și șiruri de caractere în C</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-translucentGray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="9d5cb660-b86f-40ab-a00d-8eb1b539ac22" class="page sans"><header><h1 class="page-title">Introducere în structurile de control, funcții, tablouri (array-uri) și șiruri de caractere în C</h1><p class="page-description"></p></header><div class="page-body"><p id="40403cd1-fe5e-4a11-9503-72252ad02500" class="">
+</p><p id="b7676161-6701-4ab7-b177-e25cd2ab6997" class=""><strong>Obiective</strong></p><ul id="74294c4b-3399-4a1c-98fb-98e0be94dbca" class="bulleted-list"><li style="list-style-type:disc">Familiarizarea cu structurile de control în limbajul C.</li></ul><ul id="9dd685af-0486-41da-832e-40aa2a1f5070" class="bulleted-list"><li style="list-style-type:disc">Înțelegerea și aplicarea funcțiilor.</li></ul><ul id="a16c7d5a-9f48-4f9d-b499-d7b90d8b5ff1" class="bulleted-list"><li style="list-style-type:disc">Manipularea tablourilor și șirurilor de caractere.</li></ul><ul id="4a413685-bc17-42e4-8db0-68c16a46edce" class="bulleted-list"><li style="list-style-type:disc">Dezvoltarea abilităților de rezolvare a problemelor și de programare.</li></ul><p id="36cf1f8d-5ea3-457d-a37f-e466c54e16ff" class=""><strong>Exerciții</strong></p><p id="84427d46-a614-441a-acee-4dd276f55994" class="">1.            <strong>Structuri de Control</strong></p><p id="80dbf3df-4e85-4a72-8718-40575003756f" class="">1.1.   Scrie un program care să afișeze toate numerele pare între 1 și 100 folosind o buclă for.</p><p id="d2a3e8f7-628b-43c5-a67d-6262f870d696" class="">1.2.   Scrie un program pentru a afișa numerele impare între 1 și 100 folosind o buclă while.</p><p id="1041cd7d-c1a9-468e-b127-6a19b35d69de" class="">2.            <strong>Funcții:</strong></p><p id="6c5f980c-4407-4f10-bf6d-3239d11353aa" class="">2.1  Creează o funcție care să calculeze factorialul unui număr dat.</p><p id="d08a781f-7aab-4642-a562-98f4c87110cb" class="">2.2  Creează o funcție care să calculeze aria unui triunghi pe baza datelor introduse de la tastatură.</p><p id="a8c64b6c-7851-462c-8eb6-191fad8cb6e0" class="">3.            <strong>Array-uri:</strong></p><p id="150a8b57-8896-41c4-9593-a053635cb1e4" class="">2.1  Scrie un program în C care să găsească și să afișeze valoarea maximă și pozițiile acesteia într-un array.</p><p id="a04a012b-0ff3-48ce-9f9d-78676155d55b" class="">4.            <strong>Șiruri de Caractere:</strong></p><p id="4ed70bfc-ee7a-4192-bd67-a0d80a925c3c" class="">4.1  Scrie un program care să numere și să afișeze numărul de vocale dintr-un șir de caractere dat.</p><p id="be58cbe9-8312-4116-8f49-7c18eed13444" class=""><a href="https://www.w3schools.com/c/c_strings_functions.php">https://www.w3schools.com/c/c_strings_functions.php</a></p><p id="aefe35c1-4f0b-4252-bba1-711b6033e267" class="">
+</p><p id="fc7889b1-6275-47a5-894a-41339eae6e22" class="">1.1.   Scrie un program care să afișeze toate numerele pare între 1 și 100 folosind o buclă for.</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="b33c50b7-d141-49c6-aeeb-dd10855f8f1f" class="code"><code class="language-C">void printevennumber(){
+    for (int i = 1; i&lt;=100; i++) {
+        if(i % 2 == 0){
+            printf(&quot;%d\n&quot;, i);
+
+        }
+    }
+}</code></pre><p id="b25b6191-0e94-47e4-b475-f19e77f745e9" class="">Rezultat</p><figure id="0bf57432-b378-4b63-a0cc-dde51c739c56" class="image"><a href="Introducere%20i%CC%82n%20structurile%20de%20control,%20funct%CC%A6ii,%20%209d5cb660b86f40aba00d8eb1b539ac22/Untitled.png"><img style="width:324px" src="Introducere%20i%CC%82n%20structurile%20de%20control,%20funct%CC%A6ii,%20%209d5cb660b86f40aba00d8eb1b539ac22/Untitled.png"/></a></figure><p id="31cab189-4f8a-483a-a68b-c194ad4a2d77" class="">1.2 Scrie un program pentru a afișa numerele impare între 1 și 100 folosind o buclă while.</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="e13628ae-8439-40a0-a935-d90eb1d33b69" class="code"><code class="language-C">void whileoddnumber(){
+    int i= 0;
+     while (i &lt;=99){
+         i++;
+     if (i%2!=0) {
+         printf(&quot;%d\n&quot;, i);
+     } }
+
+}
+</code></pre><p id="a17c6a8a-18ea-47fc-9e76-996d870f621e" class="">Rezultat:</p><figure id="0f16d498-785c-4292-abe4-4431017b7f69" class="image"><a href="Introducere%20i%CC%82n%20structurile%20de%20control,%20funct%CC%A6ii,%20%209d5cb660b86f40aba00d8eb1b539ac22/Untitled%201.png"><img style="width:1099px" src="Introducere%20i%CC%82n%20structurile%20de%20control,%20funct%CC%A6ii,%20%209d5cb660b86f40aba00d8eb1b539ac22/Untitled%201.png"/></a></figure><figure id="4a034fa2-ca75-4310-88d6-a8c20842034d" class="image"><a href="Introducere%20i%CC%82n%20structurile%20de%20control,%20funct%CC%A6ii,%20%209d5cb660b86f40aba00d8eb1b539ac22/Untitled%202.png"><img style="width:647px" src="Introducere%20i%CC%82n%20structurile%20de%20control,%20funct%CC%A6ii,%20%209d5cb660b86f40aba00d8eb1b539ac22/Untitled%202.png"/></a></figure><p id="ad6939ec-8b96-473e-b05d-3d9109b9ab8e" class="">2.2 Creează o funcție care să calculeze aria unui triunghi pe baza datelor introduse de tastatura</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="76f12e04-c284-45b8-a5de-13067cd390cd" class="code"><code class="language-C">void  ariatr(){
+    int a,b,c,p,Aria;
+    printf(&quot;Lungimea laturei A:\n&quot;);
+    scanf(&quot;%d&quot; , &amp;a);
+    printf(&quot;Lungimea laturei B:\n&quot;);
+    scanf(&quot;%d&quot; , &amp;b);
+    printf(&quot;Lungimea laturei C:\n&quot;);
+    scanf(&quot;%d&quot; , &amp;c);
+    int  P=a+b+c;
+    p=P/2;
+    int p1=p-a;
+    int p2=p-b;
+    int p3=p-c;
+    Aria=p*p1*p2*p3;
+    int Aria1= sqrt(Aria);
+    printf(&quot; Lungimea Ariei :&quot;);
+
+    printf(&quot;%d\n&quot;,Aria1);
+
+
+
+
+
+
+
+}</code></pre><p id="523a2be7-7f87-45fd-879f-ccf5423b8c5b" class="">Rezultat:</p><figure id="cf9a6d83-1496-4c93-bce5-8d350c1e539f" class="image"><a href="Introducere%20i%CC%82n%20structurile%20de%20control,%20funct%CC%A6ii,%20%209d5cb660b86f40aba00d8eb1b539ac22/Untitled%203.png"><img style="width:676px" src="Introducere%20i%CC%82n%20structurile%20de%20control,%20funct%CC%A6ii,%20%209d5cb660b86f40aba00d8eb1b539ac22/Untitled%203.png"/></a></figure><p id="a53bee40-a215-4b47-917c-9b078815266a" class="">2.2</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1c199439-7bee-4736-a7e0-826faf57d608" class="code"><code class="language-C">#include &lt;stdio.h&gt;
+
+// Function declaration
+long long factorial(int n);
+
+int main() {
+    int number;
+    printf(&quot;Introdu un numar factorial: &quot;);
+    scanf(&quot;%d&quot;, &amp;number);
+
+    // Check for negative input
+    if (number &lt; 0) {
+        printf(&quot;Negativ Wrong.\n&quot;);
+    } else {
+        printf(&quot;Factorial de %d este %llu\n&quot;, number, factorial(number));
+    }
+    return 0;
+}
+
+// Function definition
+long long  factorial (int n) {
+    if (n &gt;= 1)
+        return n * factorial(n - 1); // Recursive call
+    else
+        return 1; // Base case: factorial of 0 is 1
+}
+
+</code></pre><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cdd9c10-1d16-4705-87e7-5f1d6564d6bc" class="code"><code class="language-C">C:\Users\Lezbuha\CLionProjects\untitled\cmake-build-debug\untitled.exe
+Introdu un numar factorial:3
+ Factorial de 3 este 6
+
+Process finished with exit code 0
+</code></pre><p id="59299270-9a79-4fc3-96c5-4192ec09a26b" class="">3.2.1 Array</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="d34c0db9-8219-4a09-82eb-6fef4413d83b" class="code"><code class="language-C">#include &lt;stdio.h&gt;
+
+int main() {
+    int array[] = {1, 3, 2, 3, 4, 3, 5, 5, 6}; // Exemplu de array
+    int length = sizeof(array) / sizeof(array[0]); // Calculăm dimensiunea array-ului
+    int max = array[0]; // Inițializăm max cu prima valoare din array
+
+    // Găsim valoarea maximă din array
+    for(int i = 1; i &lt; length; i++) {
+        if(array[i] &gt; max) {
+            max = array[i];
+        }
+    }
+
+    printf(&quot;Valoarea maxima este: %d\n&quot;, max);
+    printf(&quot;Apare pe pozitiile: &quot;);
+
+    // Găsim toate pozițiile pe care apare valoarea maximă
+    for(int i = 0; i &lt; length; i++) {
+        if(array[i] == max) {
+            printf(&quot;%d &quot;, i);
+        }
+    }
+
+    printf(&quot;\n&quot;);
+
+    return 0;
+}
+</code></pre><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="8a7585aa-d5bf-4d6f-a0c9-f0be8dd4337f" class="code"><code class="language-C">C:\Users\Lezbuha\CLionProjects\array\cmake-build-debug\array.exe
+Valoarea maxima este: 6
+Apare pe pozitiile: 8
+
+Process finished with exit code 0
+</code></pre><p id="e5041441-3f91-4524-86a3-be579cd9c7cf" class="">4.1</p><p id="b4caf364-39bd-4ac1-b93b-ce9904f8687c" class="">Scrie un program care să numere și să afișeze numărul de vocale dintr-un șir de caractere dat.</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="8fd178bc-c608-4e2d-9964-651e9369f066" class="code"><code class="language-C">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;cctype&gt;
+
+// Funcție pentru a verifica dacă un caracter este vocală
+int esteVocala(char c) {
+    // Convertim litera mare în literă mică pentru simplificare
+    c = tolower(c);
+
+    // Verificăm dacă caracterul este o vocală
+    if(c == &#x27;a&#x27; || c == &#x27;e&#x27; || c == &#x27;i&#x27; || c == &#x27;o&#x27; || c == &#x27;u&#x27;) {
+        return 1; // Este vocală
+    }
+    return 0; // Nu este vocală
+}
+
+int main() {
+    char sir[100]; // Declaram un șir de caractere
+    int numarVocale = 0; // Inițializăm contorul de vocale
+
+    // Citim șirul de caractere de la utilizator
+    printf(&quot;Introduceti un sir de caractere: &quot;);
+    fgets(sir, sizeof(sir), stdin); // Folosim fgets pentru a permite spațiile
+
+    // Calculăm lungimea șirului
+    int lungime = strlen(sir);
+
+    // Parcurgem șirul de caractere
+    for(int i = 0; i &lt; lungime; i++) {
+        if(esteVocala(sir[i])) {
+            numarVocale++; // Incrementăm contorul dacă găsim o vocală
+        }
+    }
+
+    // Afișăm numărul total de vocale
+    printf(&quot;Numarul de vocale din sir: %d\n&quot;, numarVocale);
+
+    return 0;
+}
+</code></pre><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="ac14ca80-48d2-4433-8153-7cceecfb8b94" class="code"><code class="language-C">C:\Users\Lezbuha\CLionProjects\array\cmake-build-debug\array.exe
+Introduceti un sir de caractere:ceai vreu ceai cu cofrigi
+ Numarul de vocale din sir: 12
+
+Process finished with exit code 0
+</code></pre></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
